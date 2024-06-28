@@ -1,18 +1,11 @@
 package main
 
 import (
-	"encoding/json"
+	"geo-jot/handler"
 	"net/http"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"message": "hello world"})
-
-}
-
 func main() {
-	http.HandleFunc("/", handler)
+	http.HandleFunc("/health/check", handler.HealthCheck)
 	http.ListenAndServe(":8080", nil)
 }

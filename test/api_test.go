@@ -1,7 +1,8 @@
-package main
+package test
 
 import (
 	"encoding/json"
+	"geo-jot/handler"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -15,7 +16,7 @@ func TestHandler(t *testing.T) {
 		t.Fatal(err)
 	}
 	reqRecoder := httptest.NewRecorder()
-	handler := http.HandlerFunc(handler)
+	handler := http.HandlerFunc(handler.HealthCheck)
 
 	handler.ServeHTTP(reqRecoder, req)
 
@@ -23,7 +24,7 @@ func TestHandler(t *testing.T) {
 		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
 	}
 
-	expected := map[string]string{"message": "hello world"}
+	expected := map[string]string{"message": "checked!"}
 	var response map[string]string
 
 	err = json.NewDecoder(reqRecoder.Body).Decode(&response)
