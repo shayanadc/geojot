@@ -1,0 +1,103 @@
+[
+    {
+        "name": "Location 1",
+        "latitude": 34.052235,
+        "longitude": -118.243683
+    },
+    {
+        "name": "Location 2",
+        "latitude": 40.712776,
+        "longitude": -74.005974
+    },
+    {
+        "name": "Location 3",
+        "latitude": 51.507351,
+        "longitude": -0.127758
+    },
+    {
+        "name": "Location 4",
+        "latitude": 48.856613,
+        "longitude": 2.352222
+    },
+    {
+        "name": "Location 5",
+        "latitude": 35.689487,
+        "longitude": 139.691711
+    },
+    {
+        "name": "Location 6",
+        "latitude": 55.755825,
+        "longitude": 37.617298
+    },
+    {
+        "name": "Location 7",
+        "latitude": -33.868820,
+        "longitude": 151.209290
+    },
+    {
+        "name": "Location 8",
+        "latitude": 37.774929,
+        "longitude": -122.419418
+    },
+    {
+        "name": "Location 9",
+        "latitude": 34.693737,
+        "longitude": 135.502167
+    },
+    {
+        "name": "Location 10",
+        "latitude": 52.520008,
+        "longitude": 13.404954
+    },
+    {
+        "name": "Location 11",
+        "latitude": 40.416775,
+        "longitude": -3.703790
+    },
+    {
+        "name": "Location 12",
+        "latitude": -23.550520,
+        "longitude": -46.633308
+    },
+    {
+        "name": "Location 13",
+        "latitude": 19.432608,
+        "longitude": -99.133209
+    },
+    {
+        "name": "Location 14",
+        "latitude": 39.904202,
+        "longitude": 116.407394
+    },
+    {
+        "name": "Location 15",
+        "latitude": 41.902782,
+        "longitude": 12.496366
+    },
+    {
+        "name": "Location 16",
+        "latitude": -34.603683,
+        "longitude": -58.381557
+    },
+    {
+        "name": "Location 17",
+        "latitude": 1.352083,
+        "longitude": 103.819839
+    },
+    {
+        "name": "Location 18",
+        "latitude": 31.230391,
+        "longitude": 121.473701
+    },
+    {
+        "name": "Location 19",
+        "latitude": 41.008240,
+        "longitude": 28.978359
+    },
+    {
+        "name": "Location 20",
+        "latitude": 6.524379,
+        "longitude": 3.379206
+    }
+]
+    
