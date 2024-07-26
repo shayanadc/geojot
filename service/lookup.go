@@ -1,6 +1,9 @@
 package service
 
 import (
+	"geo-jot/db"
+	"geo-jot/models"
+	"geo-jot/repository"
 	"math"
 )
 
@@ -32,6 +35,14 @@ func degreesToRadians(degrees float64) float64 {
 type Location struct {
 	Latitude  float64
 	Longitude float64
+}
+
+func Find() []models.VehicleWithNearestParcel {
+	dbClient := db.NewClient()
+	defer dbClient.Close(dbClient.Context)
+	repoA := repository.NewVehicleRepository(dbClient)
+	results, _ := repoA.GetVehiclesWithNearestParcel()
+	return results
 }
 
 func haversine(coord1, coord2 Location) float64 {
