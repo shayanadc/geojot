@@ -24,9 +24,33 @@ func NewVehicleRepository() *vehicleRepository {
 
 	return &vehicleRepository{DB: db, Collection: db.GetCollection(vehicleCollection)}
 }
+func (repo *vehicleRepository) GetLatest() ([]models.Vehicle, error) {
+
+	pipeline := mongo.Pipeline{
+		{{"$sort", bson.D{{"number", -1}}}}, // Sort by number and then by timestamp in descending order
+		{{"$group", bson.D{
+			{"_id", "$number"},
+			{"latestDocument", bson.D{{"$last", "$$ROOT"}}}, // Use $first to get the latest document after sorting
+		}}},
+		{{"$replaceRoot", bson.D{{"newRoot", "$latestDocument"}}}},
+	}
+
+	cursor, err := repo.Collection.Aggregate(context.Background(), pipeline)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(context.Background())
+
+	var vehicles []models.Vehicle
+	if err = cursor.All(context.Background(), &vehicles); err != nil {
+		return nil, err
+	}
+
+	return vehicles, nil
+}
 
 func (r *vehicleRepository) GetAll() ([]models.Vehicle, error) {
-	ctx := context.Background() // You can use a context with timeout or cancellation if needed
+	ctx := context.Background()
 
 	cursor, err := r.Collection.Find(ctx, bson.D{})
 	if err != nil {

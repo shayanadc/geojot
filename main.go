@@ -21,7 +21,7 @@ type App struct {
 }
 
 func (app *App) Setup() {
-	config.LoadEnv(".env.test")
+	config.LoadEnv(".env")
 	conn := db.NewDatabaseConnection()
 	app.dbClient = db.NewClient(conn)
 	container.GetContainer().SetDBClient(app.dbClient)
@@ -35,9 +35,9 @@ func (app *App) CloseDB() {
 
 func main() {
 
-	GetVehiclesWithNearestParcel := service.GetAll()
+	GetVehiclesWithNearestParcel := service.GetLatest()
 
-	fmt.Println(GetVehiclesWithNearestParcel)
+	fmt.Println(GetVehiclesWithNearestParcel[0])
 
 	http.HandleFunc("/health/check", handler.HealthCheck)
 	http.ListenAndServe(":8080", nil)

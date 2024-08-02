@@ -16,3 +16,9 @@ func GetAll() []models.Vehicle {
 	results, _ := repoA.GetAll()
 	return results
 }
+
+func GetLatest() []models.Vehicle {
+	repoA := repository.NewVehicleRepository()
+	results, _ := repoA.GetLatest()
+	return results
+}
