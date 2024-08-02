@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"sync"
 
@@ -45,9 +46,9 @@ func (c *Client) GetCollection(collName string) *mongo.Collection {
 	return c.Collection
 }
 
-func (c *Client) Close(ctx context.Context) {
-
-	if err := c.Client.Disconnect(ctx); err != nil {
+func (c *Client) Close() {
+	fmt.Println("DISCONNECTING")
+	if err := c.Client.Disconnect(c.Context); err != nil {
 		log.Fatal(err)
 	}
 }

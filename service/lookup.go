@@ -1,7 +1,6 @@
 package service
 
 import (
-	"geo-jot/db"
 	"geo-jot/models"
 	"geo-jot/repository"
 	"math"
@@ -38,9 +37,7 @@ type Location struct {
 }
 
 func Find() []models.VehicleWithNearestParcel {
-	dbClient := db.NewClient()
-	defer dbClient.Close(dbClient.Context)
-	repoA := repository.NewVehicleRepository(dbClient)
+	repoA := repository.NewVehicleRepository()
 	results, _ := repoA.GetVehiclesWithNearestParcel()
 	return results
 }

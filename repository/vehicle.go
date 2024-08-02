@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"geo-jot/container"
 	"geo-jot/db"
 	"geo-jot/models"
 	"log"
@@ -16,12 +17,14 @@ type vehicleRepository struct {
 	collection *mongo.Collection
 }
 
-func NewVehicleRepository(db *db.Client) *vehicleRepository {
+func NewVehicleRepository() *vehicleRepository {
+	db := container.GetContainer().GetDBClient()
+
 	return &vehicleRepository{db: db, collection: db.GetCollection(vehicleCollection)}
 }
 
-// GetVehiclesWithNearestParcel retrieves vehicles with their nearest parcel.
 func (r *vehicleRepository) GetVehiclesWithNearestParcel() ([]models.VehicleWithNearestParcel, error) {
+
 	cursor, err := r.collection.Aggregate(r.db.Context, bson.A{
 		bson.D{
 			{"$lookup",
