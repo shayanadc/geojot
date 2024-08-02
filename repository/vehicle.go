@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"context"
+	"fmt"
 	"geo-jot/container"
 	"geo-jot/db"
 	"geo-jot/models"
@@ -13,19 +15,35 @@ import (
 const vehicleCollection string = "vehicles"
 
 type vehicleRepository struct {
-	db         *db.Client
-	collection *mongo.Collection
+	DB         *db.Client
+	Collection *mongo.Collection
 }
 
 func NewVehicleRepository() *vehicleRepository {
 	db := container.GetContainer().GetDBClient()
 
-	return &vehicleRepository{db: db, collection: db.GetCollection(vehicleCollection)}
+	return &vehicleRepository{DB: db, Collection: db.GetCollection(vehicleCollection)}
 }
 
+func (r *vehicleRepository) GetAll() ([]models.Vehicle, error) {
+	ctx := context.Background() // You can use a context with timeout or cancellation if needed
+
+	cursor, err := r.Collection.Find(ctx, bson.D{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute find operation: %w", err)
+	}
+	defer cursor.Close(ctx)
+
+	var vehicles []models.Vehicle
+	if err = cursor.All(ctx, &vehicles); err != nil {
+		return nil, fmt.Errorf("failed to decode documents: %w", err)
+	}
+
+	return vehicles, nil
+}
 func (r *vehicleRepository) GetVehiclesWithNearestParcel() ([]models.VehicleWithNearestParcel, error) {
 
-	cursor, err := r.collection.Aggregate(r.db.Context, bson.A{
+	cursor, err := r.Collection.Aggregate(r.DB.Context, bson.A{
 		bson.D{
 			{"$lookup",
 				bson.D{
@@ -69,10 +87,10 @@ func (r *vehicleRepository) GetVehiclesWithNearestParcel() ([]models.VehicleWith
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer cursor.Close(r.db.Context)
+	defer cursor.Close(r.DB.Context)
 
 	var results []models.VehicleWithNearestParcel
-	if err = cursor.All(r.db.Context, &results); err != nil {
+	if err = cursor.All(r.DB.Context, &results); err != nil {
 		log.Fatal(err)
 	}
 	return results, nil

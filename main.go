@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"geo-jot/config"
 	"geo-jot/container"
 	"geo-jot/db"
 	"geo-jot/handler"
@@ -20,7 +21,9 @@ type App struct {
 }
 
 func (app *App) Setup() {
-	app.dbClient = db.NewClient()
+	config.LoadEnv(".env.test")
+	conn := db.NewDatabaseConnection()
+	app.dbClient = db.NewClient(conn)
 	container.GetContainer().SetDBClient(app.dbClient)
 }
 
@@ -32,7 +35,7 @@ func (app *App) CloseDB() {
 
 func main() {
 
-	GetVehiclesWithNearestParcel := service.Find()
+	GetVehiclesWithNearestParcel := service.GetAll()
 
 	fmt.Println(GetVehiclesWithNearestParcel)
 

@@ -22,18 +22,18 @@ var (
 	once           sync.Once
 )
 
-func NewClient() *Client {
+func NewClient(dbConnection *DatabaseConnection) *Client {
 
 	once.Do(func() {
 		ctx := context.Background()
-		clientOptions := options.Client().ApplyURI("mongodb://localhost:27017/")
+		clientOptions := options.Client().ApplyURI(dbConnection.Url)
 
 		client, err := mongo.Connect(ctx, clientOptions)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		db := client.Database("geo-jot-db")
+		db := client.Database(dbConnection.Name)
 		clientInstance = &Client{Client: client, Context: ctx, Database: db}
 	})
 
@@ -47,8 +47,22 @@ func (c *Client) GetCollection(collName string) *mongo.Collection {
 }
 
 func (c *Client) Close() {
-	fmt.Println("DISCONNECTING")
+
 	if err := c.Client.Disconnect(c.Context); err != nil {
 		log.Fatal(err)
 	}
+}
+func (c *Client) DropDatabase() error {
+	if err := c.Client.Database(c.Database.Name()).Drop(c.Context); err != nil {
+		return fmt.Errorf("error dropping database: %w", err)
+	}
+	return nil
+}
+
+func (c *Client) DropCollection(collName string) error {
+
+	if err := c.Database.Collection(collName).Drop(c.Context); err != nil {
+		return fmt.Errorf("error dropping collection %s: %w", collName, err)
+	}
+	return nil
 }

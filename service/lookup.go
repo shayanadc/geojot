@@ -10,3 +10,9 @@ func Find() []models.VehicleWithNearestParcel {
 	results, _ := repoA.GetVehiclesWithNearestParcel()
 	return results
 }
+
+func GetAll() []models.Vehicle {
+	repoA := repository.NewVehicleRepository()
+	results, _ := repoA.GetAll()
+	return results
+}
