@@ -5,8 +5,20 @@ import (
 	"geo-jot/config"
 	"geo-jot/container"
 	"geo-jot/db"
+	"geo-jot/models"
 	"testing"
 )
+
+type MockVehicleRepository struct {
+	Vehicles []models.Vehicle
+}
+
+func (m *MockVehicleRepository) GetLatest() ([]models.Vehicle, error) {
+	return m.Vehicles, nil
+}
+func (m *MockVehicleRepository) InsertMany(vehicles []models.Vehicle) error {
+	return nil
+}
 
 func SetupTestDatabase(t *testing.T) (*db.Client, func()) {
 	config.LoadEnv("../../.env.test")

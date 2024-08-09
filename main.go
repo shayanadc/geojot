@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"geo-jot/config"
 	"geo-jot/container"
 	"geo-jot/db"
@@ -35,9 +34,7 @@ func (app *App) CloseDB() {
 
 func main() {
 
-	GetVehiclesWithNearestParcel := service.GetLatest()
-
-	fmt.Println(GetVehiclesWithNearestParcel[0])
+	service.StoreMany()
 
 	http.HandleFunc("/health/check", handler.HealthCheck)
 	http.ListenAndServe(":8080", nil)

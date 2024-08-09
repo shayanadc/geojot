@@ -6,10 +6,18 @@ import (
 )
 
 func MoveVehicles(repo repository.VehicleRepository) []models.Vehicle {
-
 	vehicles, _ := repo.GetLatest()
+
 	for _, vehicle := range vehicles {
 		vehicle.Move(10)
 	}
 	return vehicles
+}
+
+func InsertVehiclesMove() {
+	repo := repository.NewVehicleRepository()
+
+	vehicles := MoveVehicles(repo)
+
+	repo.InsertMany(vehicles)
 }

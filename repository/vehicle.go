@@ -14,6 +14,7 @@ import (
 
 type VehicleRepository interface {
 	GetLatest() ([]models.Vehicle, error)
+	InsertMany([]models.Vehicle) error
 }
 
 const vehicleCollection string = "vehicles"
@@ -21,6 +22,22 @@ const vehicleCollection string = "vehicles"
 type vehicleRepository struct {
 	DB         *db.Client
 	Collection *mongo.Collection
+}
+
+func (repo *vehicleRepository) InsertMany(vehicles []models.Vehicle) error {
+
+	docs := make([]interface{}, len(vehicles))
+	for i, v := range vehicles {
+		docs[i] = v
+	}
+	_, err := repo.Collection.InsertMany(context.Background(), docs)
+
+	if err != nil {
+		log.Printf("Failed to insert vehicles: %v", err)
+		return err
+	}
+
+	return nil
 }
 
 func NewVehicleRepository() *vehicleRepository {

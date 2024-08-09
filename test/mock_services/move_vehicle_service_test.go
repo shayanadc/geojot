@@ -3,6 +3,7 @@ package mock_services_test
 import (
 	"geo-jot/models"
 	"geo-jot/service"
+	"geo-jot/test"
 	"testing"
 )
 
@@ -20,7 +21,7 @@ func TestMoveVehicles(t *testing.T) {
 		{Number: "ABC123", Coordinates: []float64{40.7128, -74.0060}},
 		{Number: "ABC123", Coordinates: []float64{40.6119, -74.10005}},
 	}
-	mockRepo := &MockVehicleRepository{vehicles: vehicles}
+	mockRepo := &test.MockVehicleRepository{Vehicles: vehicles}
 
 	newVehicles := service.MoveVehicles(mockRepo)
 
