@@ -48,12 +48,12 @@ func NewVehicleRepository() *vehicleRepository {
 func (repo *vehicleRepository) GetLatest() ([]models.Vehicle, error) {
 
 	pipeline := mongo.Pipeline{
-		{{"$sort", bson.D{{"number", -1}}}}, // Sort by number and then by timestamp in descending order
-		{{"$group", bson.D{
-			{"_id", "$number"},
-			{"latestDocument", bson.D{{"$last", "$$ROOT"}}}, // Use $first to get the latest document after sorting
+		{{Key: "$sort", Value: bson.D{{Key: "number", Value: -1}}}}, // Sort by number in descending order
+		{{Key: "$group", Value: bson.D{
+			{Key: "_id", Value: "$number"},
+			{Key: "latestDocument", Value: bson.D{{Key: "$last", Value: "$$ROOT"}}}, // Use $last to get the latest document after sorting
 		}}},
-		{{"$replaceRoot", bson.D{{"newRoot", "$latestDocument"}}}},
+		{{Key: "$replaceRoot", Value: bson.D{{Key: "newRoot", Value: "$latestDocument"}}}},
 	}
 
 	cursor, err := repo.Collection.Aggregate(context.Background(), pipeline)
@@ -88,47 +88,49 @@ func (r *vehicleRepository) GetAll() ([]models.Vehicle, error) {
 }
 func (r *vehicleRepository) GetVehiclesWithNearestParcel() ([]models.VehicleWithNearestParcel, error) {
 
-	cursor, err := r.Collection.Aggregate(r.DB.Context, bson.A{
-		bson.D{
-			{"$lookup",
-				bson.D{
-					{"from", "parcels"},
-					{"let", bson.D{{"vehicleLoc", "$loc"}}},
-					{"pipeline",
-						bson.A{
-							bson.D{
-								{"$geoNear",
-									bson.D{
-										{"near", "$$vehicleLoc"},
-										{"distanceField", "dist.calculated"},
-										{"spherical", true},
-									},
+	pipeline := mongo.Pipeline{
+		{
+			{
+				Key: "$lookup", Value: bson.D{
+					{Key: "from", Value: "parcels"},
+					{Key: "let", Value: bson.D{{Key: "vehicleLoc", Value: "$loc"}}},
+					{Key: "pipeline", Value: mongo.Pipeline{
+						{
+							{
+								Key: "$geoNear", Value: bson.D{
+									{Key: "near", Value: "$$vehicleLoc"},
+									{Key: "distanceField", Value: "dist.calculated"},
+									{Key: "spherical", Value: true},
 								},
 							},
-							bson.D{{"$limit", 1}},
 						},
-					},
-					{"as", "nearestParcel"},
+						{
+							{Key: "$limit", Value: 1},
+						},
+					}},
+					{Key: "as", Value: "nearestParcel"},
 				},
 			},
 		},
-		bson.D{{"$unwind", "$nearestParcel"}},
-		bson.D{
-			{"$project",
-				bson.D{
-					{"number", 1},
-					{"vehicleLoc", "$loc"},
-					{"nearestParcel",
-						bson.D{
-							{"_id", "$nearestParcel._id"},
-							{"loc", "$nearestParcel.loc"},
-							{"distance", "$nearestParcel.dist.calculated"},
-						},
-					},
+		{
+			{Key: "$unwind", Value: "$nearestParcel"},
+		},
+		{
+			{
+				Key: "$project", Value: bson.D{
+					{Key: "number", Value: 1},
+					{Key: "vehicleLoc", Value: "$loc"},
+					{Key: "nearestParcel", Value: bson.D{
+						{Key: "_id", Value: "$nearestParcel._id"},
+						{Key: "loc", Value: "$nearestParcel.loc"},
+						{Key: "distance", Value: "$nearestParcel.dist.calculated"},
+					}},
 				},
 			},
 		},
-	})
+	}
+
+	cursor, err := r.Collection.Aggregate(r.DB.Context, pipeline)
 	if err != nil {
 		log.Fatal(err)
 	}

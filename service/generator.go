@@ -32,5 +32,5 @@ func StoreMany() {
 	repo := repository.NewVehicleRepository()
 	vehicles := GenerateRandomVehicles(50)
 
-	repo.InsertMany(vehicles)
+	_ = repo.InsertMany(vehicles)
 }
