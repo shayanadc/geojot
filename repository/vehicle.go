@@ -12,6 +12,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+type VehicleRepository interface {
+	GetLatest() ([]models.Vehicle, error)
+}
+
 const vehicleCollection string = "vehicles"
 
 type vehicleRepository struct {
