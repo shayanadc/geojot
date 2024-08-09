@@ -5,7 +5,6 @@ import (
 	"geo-jot/container"
 	"geo-jot/db"
 	"geo-jot/handler"
-	"geo-jot/service"
 	"net/http"
 )
 
@@ -33,8 +32,6 @@ func (app *App) CloseDB() {
 }
 
 func main() {
-
-	service.StoreMany()
 
 	http.HandleFunc("/health/check", handler.HealthCheck)
 	http.ListenAndServe(":8080", nil)
