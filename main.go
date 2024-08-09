@@ -19,7 +19,7 @@ type App struct {
 }
 
 func (app *App) Setup() {
-	config.LoadEnv(".env")
+	_ = config.LoadEnv(".env")
 	conn := db.NewDatabaseConnection()
 	app.dbClient = db.NewClient(conn)
 	container.GetContainer().SetDBClient(app.dbClient)
@@ -34,5 +34,5 @@ func (app *App) CloseDB() {
 func main() {
 
 	http.HandleFunc("/health/check", handler.HealthCheck)
-	http.ListenAndServe(":8080", nil)
+	_ = http.ListenAndServe(":8080", nil)
 }

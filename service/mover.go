@@ -19,5 +19,5 @@ func InsertVehiclesMove() {
 
 	vehicles := MoveVehicles(repo)
 
-	repo.InsertMany(vehicles)
+	_ = repo.InsertMany(vehicles)
 }
