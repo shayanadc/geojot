@@ -10,6 +10,17 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
 
+    services:
+      mongodb:
+        image: mongo:5.0   # Use the MongoDB version you need
+        ports:
+          - 27017:27017
+        options: >- 
+          --health-cmd="mongosh --eval 'db.runCommand(\"ping\").ok'" 
+          --health-interval=10s 
+          --health-timeout=5s 
+          --health-retries=3
+
     steps:
     - name: Set up Go
       uses: actions/setup-go@v2
@@ -20,7 +31,17 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Wait for MongoDB to be ready
+      run: |
+        for i in {1..30}; do
+          nc -z localhost 27017 && echo "MongoDB is ready" && break
+          echo "Waiting for MongoDB to be ready..."
+          sleep 2
+        done
+
     - name: Run Tests
+      env:
+        MONGO_URI: mongodb://localhost:27017/
       run: go test ./test/... -v
 
   golangci:
