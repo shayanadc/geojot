@@ -9,7 +9,7 @@ import (
 )
 
 func SetupTestDatabase(t *testing.T) (*db.Client, func()) {
-	config.LoadEnv("../.env.test")
+	config.LoadEnv("../../.env.test")
 	conn := db.NewDatabaseConnection()
 	fmt.Printf(conn.Name)
 	dbClient := db.NewClient(conn)
