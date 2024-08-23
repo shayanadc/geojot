@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log"
 	"sync"
+	"time"
 
+	"go.mongodb.org/mongo-driver/event"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -25,8 +27,15 @@ var (
 func NewClient(dbConnection *DatabaseConnection) *Client {
 
 	once.Do(func() {
+		poolMonitor := &event.PoolMonitor{
+			Event: func(evt *event.PoolEvent) {
+				if evt.Type == event.GetSucceeded {
+					fmt.Printf("Connection ID: %v\n", evt.ConnectionID)
+				}
+			},
+		}
 		ctx := context.Background()
-		clientOptions := options.Client().ApplyURI(dbConnection.Url)
+		clientOptions := options.Client().ApplyURI(dbConnection.Url).SetPoolMonitor(poolMonitor).SetMaxPoolSize(50).SetMinPoolSize(10).SetMaxConnIdleTime(1 * time.Microsecond)
 
 		client, err := mongo.Connect(ctx, clientOptions)
 		if err != nil {

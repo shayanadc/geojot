@@ -1,9 +1,11 @@
 package service
 
 import (
+	"fmt"
 	"geo-jot/models"
 	"geo-jot/repository"
 	"strconv"
+	"time"
 
 	"golang.org/x/exp/rand"
 )
@@ -28,9 +30,33 @@ func GenerateRandomVehicles(count int) []models.Vehicle {
 	return vehicles
 }
 
-func StoreMany() {
+func StoreConcurrently() {
 	repo := repository.NewVehicleRepository()
-	vehicles := GenerateRandomVehicles(50)
+	vehicles := GenerateRandomVehicles(80000)
 
-	_ = repo.InsertMany(vehicles)
+	vehiclesA := vehicles[:20000]
+	vehiclesB := vehicles[20000:40000]
+	vehiclesC := vehicles[40000:60000]
+	vehiclesD := vehicles[60000:80000]
+
+	now := time.Now()
+
+	go func(vehicles []models.Vehicle) {
+		_ = repo.InsertMany(vehicles)
+	}(vehiclesA)
+
+	go func(vehicles []models.Vehicle) {
+		_ = repo.InsertMany(vehicles)
+	}(vehiclesB)
+
+	go func(vehicles []models.Vehicle) {
+		_ = repo.InsertMany(vehicles)
+	}(vehiclesC)
+
+	go func(vehicles []models.Vehicle) {
+		_ = repo.InsertMany(vehicles)
+	}(vehiclesD)
+
+	fmt.Println("Time taken:", time.Since(now))
+
 }
