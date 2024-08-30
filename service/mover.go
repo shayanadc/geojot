@@ -5,8 +5,18 @@ import (
 	"geo-jot/repository"
 )
 
-func MoveVehicles(repo repository.VehicleRepository) []models.Vehicle {
-	vehicles, _ := repo.GetLatest()
+type MoverService struct {
+	vehicleRepo repository.VehicleRepository
+}
+
+func NewMoverService(vehicleRepo repository.VehicleRepository) *MoverService {
+	return &MoverService{
+		vehicleRepo: vehicleRepo,
+	}
+}
+
+func (service MoverService) MoveVehicles() []models.Vehicle {
+	vehicles, _ := service.vehicleRepo.GetLatest()
 
 	for _, vehicle := range vehicles {
 		vehicle.Move(10)
@@ -14,10 +24,9 @@ func MoveVehicles(repo repository.VehicleRepository) []models.Vehicle {
 	return vehicles
 }
 
-func InsertVehiclesMove() {
-	repo := repository.NewVehicleRepository()
+func (service MoverService) InsertVehiclesMove() {
 
-	vehicles := MoveVehicles(repo)
+	vehicles := service.MoveVehicles()
 
-	_ = repo.InsertMany(vehicles)
+	_ = service.vehicleRepo.InsertMany(vehicles)
 }

@@ -15,6 +15,8 @@ import (
 type VehicleRepository interface {
 	GetLatest() ([]models.Vehicle, error)
 	InsertMany([]models.Vehicle) error
+	GetVehiclesWithNearestParcel() ([]models.VehicleWithNearestParcel, error)
+	GetAll() ([]models.Vehicle, error)
 }
 
 const vehicleCollection string = "vehicles"
@@ -22,6 +24,12 @@ const vehicleCollection string = "vehicles"
 type vehicleRepository struct {
 	DB         *db.Client
 	Collection *mongo.Collection
+}
+
+func NewVehicleRepository() *vehicleRepository {
+	db := container.GetContainer().GetDBClient()
+
+	return &vehicleRepository{DB: db, Collection: db.GetCollection(vehicleCollection)}
 }
 
 func (repo *vehicleRepository) InsertMany(vehicles []models.Vehicle) error {
@@ -40,11 +48,6 @@ func (repo *vehicleRepository) InsertMany(vehicles []models.Vehicle) error {
 	return nil
 }
 
-func NewVehicleRepository() *vehicleRepository {
-	db := container.GetContainer().GetDBClient()
-
-	return &vehicleRepository{DB: db, Collection: db.GetCollection(vehicleCollection)}
-}
 func (repo *vehicleRepository) GetLatest() ([]models.Vehicle, error) {
 
 	pipeline := mongo.Pipeline{

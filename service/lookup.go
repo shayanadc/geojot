@@ -5,20 +5,27 @@ import (
 	"geo-jot/repository"
 )
 
-func Find() []models.VehicleWithNearestParcel {
-	repoA := repository.NewVehicleRepository()
-	results, _ := repoA.GetVehiclesWithNearestParcel()
+type LookupService struct {
+	vehicleRepo repository.VehicleRepository
+}
+
+func NewLookupService(vehicleRepo repository.VehicleRepository) *LookupService {
+	return &LookupService{
+		vehicleRepo: vehicleRepo,
+	}
+}
+
+func (service LookupService) Find() []models.VehicleWithNearestParcel {
+	results, _ := service.vehicleRepo.GetVehiclesWithNearestParcel()
 	return results
 }
 
-func GetAll() []models.Vehicle {
-	repoA := repository.NewVehicleRepository()
-	results, _ := repoA.GetAll()
+func (service LookupService) GetAll() []models.Vehicle {
+	results, _ := service.vehicleRepo.GetAll()
 	return results
 }
 
-func GetLatest() []models.Vehicle {
-	repoA := repository.NewVehicleRepository()
-	results, _ := repoA.GetLatest()
+func (service LookupService) GetLatest() []models.Vehicle {
+	results, _ := service.vehicleRepo.GetLatest()
 	return results
 }
